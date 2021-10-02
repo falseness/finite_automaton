@@ -16,9 +16,9 @@ RegularTransformer::RegularTransformer(const string& regular_expression) {
 void RegularTransformer::Combine(
         SubAutomaton& sub_left, SubAutomaton& sub_right, const string& command) {
     if (command == "+")
-        sub_left.Unite(sub_right);
+        sub_left.Unite(*result_, sub_right);
     else if (command == "")
-        sub_left.Concatenate(sub_right);
+        sub_left.Concatenate(*result_, sub_right);
 }
 
 
@@ -26,7 +26,7 @@ SubAutomaton RegularTransformer::ParseHere(
         string::iterator begin, string::iterator separator, string::iterator end) {
     auto left_sub_automaton = std::move(RecursiveParse(begin, separator));
     if ((*separator) == '*') {
-        left_sub_automaton.Loop();
+        left_sub_automaton.Loop(*result_);
         if (++separator == end)
             return std::move(left_sub_automaton);
     }
@@ -49,7 +49,7 @@ SubAutomaton RegularTransformer::OrdinaryParse(string::iterator begin, string::i
     }
     string word;
     std::copy(begin, end, std::back_inserter(word));
-    return {result_.get(), std::move(word)};
+    return {*result_, std::move(word)};
 
 }
 
