@@ -4,7 +4,7 @@
 
 class RegularTransformer {
     string regular_expression_;
-    unique_ptr<FiniteAutomaton> result_;
+    FiniteAutomaton result_;
     void CheckBracketsBalance();
     void DeleteUselessAsteriskSymbols();
 
@@ -15,5 +15,5 @@ class RegularTransformer {
     SubAutomaton RecursiveParse(string::iterator, string::iterator);
 public:
     explicit RegularTransformer(const string&);
-    unique_ptr<FiniteAutomaton> Parse();
+    FiniteAutomaton Parse();
 };

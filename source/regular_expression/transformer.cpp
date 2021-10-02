@@ -1,8 +1,7 @@
 #include "transformer.h"
 #include <cassert>
 
-RegularTransformer::RegularTransformer(const string& regular_expression) {
-    result_ = make_unique<FiniteAutomaton>();
+RegularTransformer::RegularTransformer(const string& regular_expression) : result_() {
     regular_expression_ = "";
     for (auto c : regular_expression) {
         if (std::isspace(c) && c == '\0')
@@ -16,9 +15,9 @@ RegularTransformer::RegularTransformer(const string& regular_expression) {
 void RegularTransformer::Combine(
         SubAutomaton& sub_left, SubAutomaton& sub_right, const string& command) {
     if (command == "+")
-        sub_left.Unite(*result_, sub_right);
+        sub_left.Unite(result_, sub_right);
     else if (command == "")
-        sub_left.Concatenate(*result_, sub_right);
+        sub_left.Concatenate(result_, sub_right);
 }
 
 
@@ -26,7 +25,7 @@ SubAutomaton RegularTransformer::ParseHere(
         string::iterator begin, string::iterator separator, string::iterator end) {
     auto left_sub_automaton = std::move(RecursiveParse(begin, separator));
     if ((*separator) == '*') {
-        left_sub_automaton.Loop(*result_);
+        left_sub_automaton.Loop(result_);
         if (++separator == end)
             return std::move(left_sub_automaton);
     }
@@ -49,7 +48,7 @@ SubAutomaton RegularTransformer::OrdinaryParse(string::iterator begin, string::i
     }
     string word;
     std::copy(begin, end, std::back_inserter(word));
-    return {*result_, std::move(word)};
+    return {result_, std::move(word)};
 
 }
 
@@ -81,9 +80,9 @@ SubAutomaton RegularTransformer::RecursiveParse(string::iterator begin, string::
     return OrdinaryParse(begin, end);
 }
 
-unique_ptr<FiniteAutomaton> RegularTransformer::Parse() {
+FiniteAutomaton RegularTransformer::Parse() {
     SubAutomaton sub_automaton = std::move(RecursiveParse(regular_expression_.begin(), regular_expression_.end()));
-    result_->InitStartAndEndVertexes(std::move(sub_automaton));
+    result_.InitStartAndEndVertexes(std::move(sub_automaton));
     return std::move(result_);
 }
 

@@ -13,8 +13,8 @@ void FiniteAutomaton::AddNewEdge(FiniteAutomaton::Vertex start, FiniteAutomaton:
 }
 
 void FiniteAutomaton::InitStartAndEndVertexes(SubAutomaton&& sub_automaton) {
-    assert(!start_and_end_vertexes_.get());
-    start_and_end_vertexes_ = make_unique<SubAutomaton>(std::move(sub_automaton));
+    assert(!start_and_final_vertexes_.get());
+    start_and_final_vertexes_ = make_unique<SubAutomaton>(std::move(sub_automaton));
 }
 
 void FiniteAutomaton::Output() const {
@@ -27,9 +27,9 @@ void FiniteAutomaton::Output() const {
         }
     }
     std::cout << "START\n";
-    std::cout << start_and_end_vertexes_->start_ << '\n';
+    std::cout << start_and_final_vertexes_->start_ << '\n';
     std::cout << "END\n";
-    for (auto u:start_and_end_vertexes_->end_vertexes_) {
+    for (auto u:start_and_final_vertexes_->final_vertexes_) {
         std::cout << u << ' ';
     }
 }
@@ -39,5 +39,33 @@ const vector<vector<FiniteAutomaton::Edge>>& FiniteAutomaton::get_graph() const 
 }
 
 const SubAutomaton& FiniteAutomaton::get_start_and_end_vertexes() const {
-    return *start_and_end_vertexes_;
+    return *start_and_final_vertexes_;
+}
+
+FiniteAutomaton::FiniteAutomaton(size_t vertexes_count, Vertex start) :
+        start_and_final_vertexes_(make_unique<SubAutomaton>(start)) {
+    graph_.resize(vertexes_count);
+}
+
+size_t FiniteAutomaton::size() const {
+    return graph_.size();
+}
+
+void FiniteAutomaton::set_final(FiniteAutomaton::Vertex vertex, bool should_be_final) {
+    if (should_be_final)
+        start_and_final_vertexes_->final_vertexes_.insert(vertex);
+    else
+        start_and_final_vertexes_->final_vertexes_.erase(vertex);
+}
+
+bool FiniteAutomaton::is_final(FiniteAutomaton::Vertex vertex) const {
+    return start_and_final_vertexes_->final_vertexes_.contains(vertex);
+}
+
+void FiniteAutomaton::set_start(FiniteAutomaton::Vertex new_start) {
+    start_and_final_vertexes_->start_ = new_start;
+}
+
+FiniteAutomaton::Vertex FiniteAutomaton::get_start() const {
+    return start_and_final_vertexes_->start_;
 }
