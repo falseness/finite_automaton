@@ -31,6 +31,8 @@ private:
     vector<vector<Edge>> graph_;
     unique_ptr<SubAutomaton> start_and_end_vertexes_;
 public:
+    [[nodiscard]] const vector<vector<Edge>>& get_graph() const;
+    [[nodiscard]] const SubAutomaton& get_start_and_end_vertexes() const;
     FiniteAutomaton::Vertex AddNewVertex();
     void AddNewEdge(Vertex, Edge&&);
 };

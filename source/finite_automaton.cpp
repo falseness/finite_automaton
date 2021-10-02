@@ -18,11 +18,12 @@ void FiniteAutomaton::InitStartAndEndVertexes(SubAutomaton&& sub_automaton) {
 }
 
 void FiniteAutomaton::Output() const {
+    std::cout << (this == start_and_end_vertexes_->automaton_) << '\n';
     static const string empty_word = "ε";
     std::cout << graph_.size() << '\n';
     for (int i = 0; i < graph_.size(); ++i) {
         for (auto& u : graph_[i]) {
-            string word_output = u.word == "" ? empty_word : u.word;
+            string word_output = u.word.empty() ? empty_word : u.word;
             std::cout << i << ' ' << u.finish << ' ' << word_output << '\n';
         }
     }
@@ -32,4 +33,12 @@ void FiniteAutomaton::Output() const {
     for (auto u:start_and_end_vertexes_->end_vertexes_) {
         std::cout << u << ' ';
     }
+}
+
+const vector<vector<FiniteAutomaton::Edge>>& FiniteAutomaton::get_graph() const {
+    return graph_;
+}
+
+const SubAutomaton& FiniteAutomaton::get_start_and_end_vertexes() const {
+    return *start_and_end_vertexes_;
 }

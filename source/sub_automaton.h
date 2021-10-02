@@ -3,6 +3,7 @@
 #pragma once
 
 class SubAutomaton {
+public:
     FiniteAutomaton* automaton_;
 public:
     FiniteAutomaton::Vertex start_;
