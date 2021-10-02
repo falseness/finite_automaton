@@ -22,10 +22,10 @@ public:
         Vertex finish;
         string word;
     };
-    FiniteAutomaton();
+    FiniteAutomaton() = default;
     FiniteAutomaton(const FiniteAutomaton&) = delete;
     FiniteAutomaton(FiniteAutomaton&&) = default;
-    void SetStartAndEndVertexes(SubAutomaton&&);
+    void InitStartAndEndVertexes(SubAutomaton &&sub_automaton);
     void Output() const;
 private:
     vector<vector<Edge>> graph_;

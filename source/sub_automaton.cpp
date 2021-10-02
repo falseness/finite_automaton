@@ -39,7 +39,3 @@ SubAutomaton& SubAutomaton::Loop() {
     start_ = new_start;
     return *this;
 }
-
-SubAutomaton::SubAutomaton(FiniteAutomaton* automaton) {
-    automaton_ = automaton;
-}

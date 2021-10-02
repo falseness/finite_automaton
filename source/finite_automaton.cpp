@@ -12,15 +12,17 @@ void FiniteAutomaton::AddNewEdge(FiniteAutomaton::Vertex start, FiniteAutomaton:
     graph_[start].push_back(std::move(edge));
 }
 
-void FiniteAutomaton::SetStartAndEndVertexes(SubAutomaton&& sub_automaton) {
-    *start_and_end_vertexes_ = std::move(sub_automaton);
+void FiniteAutomaton::InitStartAndEndVertexes(SubAutomaton&& sub_automaton) {
+    assert(!start_and_end_vertexes_.get());
+    start_and_end_vertexes_ = make_unique<SubAutomaton>(std::move(sub_automaton));
 }
 
 void FiniteAutomaton::Output() const {
+    static const string empty_word = "ε";
     std::cout << graph_.size() << '\n';
     for (int i = 0; i < graph_.size(); ++i) {
         for (auto& u : graph_[i]) {
-            string word_output = u.word == "" ? "ε" : u.word;
+            string word_output = u.word == "" ? empty_word : u.word;
             std::cout << i << ' ' << u.finish << ' ' << word_output << '\n';
         }
     }
@@ -31,6 +33,3 @@ void FiniteAutomaton::Output() const {
         std::cout << u << ' ';
     }
 }
-
-FiniteAutomaton::FiniteAutomaton() : start_and_end_vertexes_(make_unique<SubAutomaton>(this)) {}
-

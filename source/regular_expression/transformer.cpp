@@ -83,7 +83,7 @@ SubAutomaton RegularTransformer::RecursiveParse(string::iterator begin, string::
 
 unique_ptr<FiniteAutomaton> RegularTransformer::Parse() {
     SubAutomaton sub_automaton = std::move(RecursiveParse(regular_expression_.begin(), regular_expression_.end()));
-    result_->SetStartAndEndVertexes(std::move(sub_automaton));
+    result_->InitStartAndEndVertexes(std::move(sub_automaton));
     return std::move(result_);
 }
 

@@ -9,7 +9,6 @@ public:
     set<FiniteAutomaton::Vertex> end_vertexes_;
 
     SubAutomaton(FiniteAutomaton*, string&&);
-    explicit SubAutomaton(FiniteAutomaton*);
     SubAutomaton(const SubAutomaton&) = delete;
     SubAutomaton(SubAutomaton&&) = default;
     SubAutomaton& operator=(SubAutomaton&&) = default;
