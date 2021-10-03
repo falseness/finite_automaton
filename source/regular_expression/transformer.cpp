@@ -50,6 +50,8 @@ SubAutomaton RegularTransformer::ParseHere(
 }
 
 SubAutomaton RegularTransformer::OrdinaryParse(string::iterator begin, string::iterator end) {
+
+
     for (auto it = begin; it != end; ++it) {
         char c = *it;
         if (('a' <= c && c <= 'z') || string(1, c) == FiniteAutomaton::kEmptyWord)
@@ -89,6 +91,20 @@ SubAutomaton RegularTransformer::RecursiveParse(string::iterator begin, string::
     if (begin == end) {
         assert(false);
     }
+    int depth = 0;
+    for (auto it = begin; it != end; ++it) {
+        if ((*it) == '(') {
+            ++depth;
+            continue;
+        }
+        if ((*it) == ')') {
+            --depth;
+            continue;
+        }
+        if (!depth && (*it) == '+')
+            return ParseHere(begin, it, end);
+    }
+    assert(!depth);
     if ((*begin) == '(')
         return BracketsParse(begin, end);
     return OrdinaryParse(begin, end);

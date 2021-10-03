@@ -6,7 +6,7 @@
 
 int main() {
 
-    auto transformer = RegularTransformer("a+b(b)*+ε");
+    auto transformer = RegularTransformer("(a + b)*c + ε");
     auto automaton = transformer.Parse();
     automaton.Output();
     std::cout << '\n';
