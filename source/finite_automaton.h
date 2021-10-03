@@ -25,6 +25,7 @@ public:
     FiniteAutomaton() = default;
     FiniteAutomaton(const FiniteAutomaton&) = delete;
     FiniteAutomaton(FiniteAutomaton&&) = default;
+    FiniteAutomaton& operator=(FiniteAutomaton&&) = default;
     FiniteAutomaton(size_t, Vertex);
     void InitStartAndEndVertexes(SubAutomaton &&sub_automaton);
     void Output() const;

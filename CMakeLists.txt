@@ -17,6 +17,6 @@ set(    MAIN_SOURCE
         source/sub_automaton.cpp
         source/finite_automaton.cpp
 
-        source/empty_word_deleter/empty_word_deleter.cpp source/empty_word_deleter/empty_word_deleter.h)
+        source/empty_word_deleter/empty_word_deleter.cpp source/empty_word_deleter/empty_word_deleter.h source/deterministic_automaton/transformer.cpp source/deterministic_automaton/transformer.h source/deterministic_automaton/delete_long_words.cpp source/deterministic_automaton/delete_long_words.h)
 
 add_executable(finite_automaton ${MAIN_SOURCE})
