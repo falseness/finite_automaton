@@ -1,12 +1,12 @@
 #include "delete_long_words.h"
 #include <cassert>
 
-LongWordsDeleter::LongWordsDeleter(const FiniteAutomaton& automaton) :
+LongWordsDeleter::LongWordsDeleter(const NoEmptyWordsAutomaton& automaton) :
     automaton_(automaton), graph_(automaton_.get_graph()), result_(automaton_.size(), automaton_.get_start()) {
     used_.resize(result_.size());
 }
 
-pair<FiniteAutomaton, vector<string>> LongWordsDeleter::Transform() {
+pair<NoEmptyWordsAutomaton, vector<string>> LongWordsDeleter::Transform() {
     DFS(automaton_.get_start());
     vector<string> result_alphabet;
     for (auto some_char : alphabet_) {

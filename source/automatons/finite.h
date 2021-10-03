@@ -29,17 +29,17 @@ public:
     FiniteAutomaton(size_t, Vertex);
     void InitStartAndEndVertexes(SubAutomaton &&sub_automaton);
     void Output() const;
-private:
+protected:
     vector<vector<Edge>> graph_;
     unique_ptr<SubAutomaton> start_and_final_vertexes_;
 public:
-    size_t size() const;
+    [[nodiscard]] size_t size() const;
     [[nodiscard]] const vector<vector<Edge>>& get_graph() const;
     [[nodiscard]] const SubAutomaton& get_start_and_end_vertexes() const;
     FiniteAutomaton::Vertex AddNewVertex();
     void set_final(Vertex, bool);
-    bool is_final(Vertex vertex) const;
+    [[nodiscard]] bool is_final(Vertex vertex) const;
     void set_start(Vertex);
-    Vertex get_start() const;
+    [[nodiscard]] Vertex get_start() const;
     void AddNewEdge(Vertex, Edge&&);
 };

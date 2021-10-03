@@ -1,4 +1,4 @@
-#include <source/sub_automaton.h>
+#include <source/automatons/sub_automaton.h>
 
 #pragma once
 

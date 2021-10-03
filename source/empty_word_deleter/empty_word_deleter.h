@@ -1,4 +1,5 @@
-#include <source/sub_automaton.h>
+#include <source/automatons/sub_automaton.h>
+#include <source/automatons/no_empty_words.h>
 
 #pragma once
 
@@ -6,7 +7,7 @@ class EmptyWordDeleter {
     const FiniteAutomaton& automaton_;
     const vector<vector<FiniteAutomaton::Edge>>& graph_;
 
-    FiniteAutomaton result_;
+    NoEmptyWordsAutomaton result_;
     size_t used_label_ = 0;
     vector<size_t> used_;
     vector<FiniteAutomaton::Edge> vertex_edges_;
@@ -19,6 +20,6 @@ class EmptyWordDeleter {
     static bool EdgeComparatorLess(const FiniteAutomaton::Edge&, const FiniteAutomaton::Edge&);
     static bool EdgeComparatorEqual(const FiniteAutomaton::Edge&, const FiniteAutomaton::Edge&);
 public:
-    EmptyWordDeleter(const FiniteAutomaton&);
-    FiniteAutomaton DeleteEmptyWords();
+    explicit EmptyWordDeleter(const FiniteAutomaton&);
+    NoEmptyWordsAutomaton DeleteEmptyWords();
 };

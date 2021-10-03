@@ -1,17 +1,17 @@
-#include <source/sub_automaton.h>
+#include <source/automatons/no_empty_words.h>
 
 #pragma once
 
 
 class LongWordsDeleter {
-    const FiniteAutomaton& automaton_;
+    const NoEmptyWordsAutomaton& automaton_;
     const vector<vector<FiniteAutomaton::Edge>>& graph_;
-    FiniteAutomaton result_;
+    NoEmptyWordsAutomaton result_;
     set<char> alphabet_;
     vector<uint8_t> used_;
     void DFS(FiniteAutomaton::Vertex);
 public:
-    explicit LongWordsDeleter(const FiniteAutomaton&);
+    explicit LongWordsDeleter(const NoEmptyWordsAutomaton&);
     // return automaton and sorted alphabet
-    pair<FiniteAutomaton, vector<string>> Transform();
+    pair<NoEmptyWordsAutomaton, vector<string>> Transform();
 };

@@ -6,7 +6,7 @@ EmptyWordDeleter::EmptyWordDeleter(const FiniteAutomaton& automaton) :
 }
 
 
-FiniteAutomaton EmptyWordDeleter::DeleteEmptyWords() {
+NoEmptyWordsAutomaton EmptyWordDeleter::DeleteEmptyWords() {
     for (FiniteAutomaton::Vertex i = 0; i < graph_.size(); ++i) {
         AddEdges(i);
     }

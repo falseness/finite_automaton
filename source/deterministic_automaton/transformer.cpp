@@ -2,7 +2,7 @@
 #include <source/deterministic_automaton/delete_long_words.h>
 #include <cassert>
 
-ToDeterministicTransformer::ToDeterministicTransformer(const FiniteAutomaton& automaton) {
+ToDeterministicTransformer::ToDeterministicTransformer(const NoEmptyWordsAutomaton& automaton) {
 
     auto new_automaton_and_alphabet = LongWordsDeleter(automaton).Transform();
     automaton_ = std::move(new_automaton_and_alphabet.first);
@@ -11,7 +11,7 @@ ToDeterministicTransformer::ToDeterministicTransformer(const FiniteAutomaton& au
     alphabet_ = std::move(new_automaton_and_alphabet.second);
 }
 
-FiniteAutomaton ToDeterministicTransformer::Transform() {
+DeterministicAutomaton ToDeterministicTransformer::Transform() {
     auto graph = automaton_.get_graph();
     set<FiniteAutomaton::Vertex> new_vertexes_set;
 

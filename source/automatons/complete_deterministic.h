@@ -1,0 +1,12 @@
+#include <source/automatons/deterministic.h>
+
+#pragma once
+
+class CompleteDeterministicAutomaton : public DeterministicAutomaton {
+    vector<string> alphabet_;
+    void InitializeAlphabet(const vector<vector<Edge>>&);
+public:
+    CompleteDeterministicAutomaton(size_t, Vertex);
+    explicit CompleteDeterministicAutomaton(const DeterministicAutomaton&);
+    [[nodiscard]] DeterministicAutomaton CreateMinimalDeterministicAutomaton() const;
+};

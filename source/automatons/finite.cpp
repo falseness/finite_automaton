@@ -1,5 +1,5 @@
-#include "finite_automaton.h"
-#include <source/sub_automaton.h>
+#include "finite.h"
+#include <source/automatons/sub_automaton.h>
 #include <cassert>
 #include <iostream>
 
