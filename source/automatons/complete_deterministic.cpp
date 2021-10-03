@@ -30,7 +30,7 @@ CompleteDeterministicAutomaton::CompleteDeterministicAutomaton(const Determinist
 }
 
 
-DeterministicAutomaton CompleteDeterministicAutomaton::CreateMinimalDeterministicAutomaton() const {
+CompleteDeterministicAutomaton CompleteDeterministicAutomaton::CreateMinimalDeterministicAutomaton() const {
     vector<vector<FiniteAutomaton::Vertex>> equivalence_classes;
     vector<FiniteAutomaton::Vertex> get_vertex_equivalence_class(graph_.size());
 
@@ -85,7 +85,7 @@ DeterministicAutomaton CompleteDeterministicAutomaton::CreateMinimalDeterministi
                 start_vertex = i;
         }
     }
-    DeterministicAutomaton result(equivalence_classes.size(), start_vertex);
+    CompleteDeterministicAutomaton result(equivalence_classes.size(), start_vertex);
     for (FiniteAutomaton::Vertex i = 0; i < equivalence_classes.size(); ++i) {
         assert(!equivalence_classes[i].empty());
         FiniteAutomaton::Vertex some_element = equivalence_classes[i][0];
@@ -110,3 +110,78 @@ void CompleteDeterministicAutomaton::InitializeAlphabet(const vector<vector<Edge
     sort(alphabet_.begin(), alphabet_.end());
     alphabet_.erase(std::unique(alphabet_.begin(), alphabet_.end()), alphabet_.end());
 }
+
+string CompleteDeterministicAutomaton::CreateRegularExpression() const {
+    auto regular_expression_plus = [](string& regular_expression) {
+        if (regular_expression.empty())
+            regular_expression = "(";
+        else
+            regular_expression += "+";
+    };
+
+    auto tmp_graph = get_graph();
+
+    vector<vector<Edge>> graph(tmp_graph.size() + 1);
+    graph[0].push_back({(FiniteAutomaton::Vertex)(get_start() + 1), ""});
+
+    FiniteAutomaton::Vertex final_vertex = graph.size();
+
+    for (int i = 1; i < graph.size(); ++i) {
+        for (const auto& edge : tmp_graph[i - 1]) {
+            graph[i].push_back({(FiniteAutomaton::Vertex)(edge.finish + 1), edge.word});
+        }
+        if (is_final(i - 1))
+            graph[i].push_back({final_vertex, ""});
+    }
+    assert(!graph.empty());
+    while (graph.size() != 1) {
+        vector<Edge> out_vertexes;
+        string cycles_regular;
+        FiniteAutomaton::Vertex deleting_vertex = graph.size() - 1;
+        for (auto edge : graph.back()) {
+            if (edge.finish == deleting_vertex) {
+                regular_expression_plus(cycles_regular);
+                cycles_regular += edge.word;
+            }
+            else
+                out_vertexes.push_back(std::move(edge));
+        }
+        if (!cycles_regular.empty())
+            cycles_regular += ")*";
+        graph.pop_back();
+        for (FiniteAutomaton::Vertex i = 0; i < graph.size(); ++i) {
+            vector<FiniteAutomaton::Edge> new_edges;
+            for (auto& old_edge : graph[i]) {
+                if (old_edge.finish != deleting_vertex) {
+                    new_edges.push_back(std::move(old_edge));
+                    continue;
+                }
+                for (const auto& out_edge : out_vertexes) {
+                    new_edges.push_back({out_edge.finish, old_edge.word + cycles_regular + out_edge.word});
+                }
+            }
+            swap(new_edges, graph[i]);
+        }
+    }
+
+    string cycles_regular;
+    string main_regular;
+    for (const auto& edge : graph[0]) {
+        if (edge.finish) {
+            if (!main_regular.empty())
+                main_regular += "+";
+            main_regular += edge.word;
+        }
+        else {
+            regular_expression_plus(cycles_regular);
+            cycles_regular += edge.word;
+        }
+    }
+    if (!cycles_regular.empty())
+        cycles_regular += ")*";
+
+    return cycles_regular + main_regular;
+}
+
+CompleteDeterministicAutomaton::CompleteDeterministicAutomaton(size_t count, FiniteAutomaton::Vertex start) :
+    DeterministicAutomaton(count, start) {}

@@ -5,7 +5,8 @@
 #include <source/automatons/complete_deterministic.h>
 
 int main() {
-    auto transformer = RegularTransformer("(a+b)*c");
+
+    auto transformer = RegularTransformer("(a+b d*)*c");
     auto automaton = transformer.Parse();
     automaton.Output();
     std::cout << '\n';
@@ -21,5 +22,8 @@ int main() {
     std::cout << '\n';
     auto min_d_automaton = complete_d.CreateMinimalDeterministicAutomaton();
     min_d_automaton.Output();
+
+    string result = min_d_automaton.CreateRegularExpression();
+    std::cout << '\n' << result;
     return 0;
 }

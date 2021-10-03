@@ -6,7 +6,8 @@ class CompleteDeterministicAutomaton : public DeterministicAutomaton {
     vector<string> alphabet_;
     void InitializeAlphabet(const vector<vector<Edge>>&);
 public:
-    CompleteDeterministicAutomaton(size_t, Vertex);
+    CompleteDeterministicAutomaton(size_t, FiniteAutomaton::Vertex);
     explicit CompleteDeterministicAutomaton(const DeterministicAutomaton&);
-    [[nodiscard]] DeterministicAutomaton CreateMinimalDeterministicAutomaton() const;
+    [[nodiscard]] CompleteDeterministicAutomaton CreateMinimalDeterministicAutomaton() const;
+    [[nodiscard]] string CreateRegularExpression() const;
 };

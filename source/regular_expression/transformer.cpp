@@ -4,7 +4,7 @@
 RegularTransformer::RegularTransformer(const string& regular_expression) : result_() {
     regular_expression_ = "";
     for (auto c : regular_expression) {
-        if (std::isspace(c) && c == '\0')
+        if (std::isspace(c) || c == '\0')
             continue;
         regular_expression_ += c;
     }
