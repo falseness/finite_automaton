@@ -3,10 +3,13 @@
 #include <source/empty_word_deleter/empty_word_deleter.h>
 #include <source/deterministic_automaton/transformer.h>
 #include <source/automatons/complete_deterministic.h>
+#include <fstream>
 
 int main() {
-
-    auto transformer = RegularTransformer("(a + b)*c + ε");
+    std::ifstream fin("input.txt");
+    string tmp_s;
+    fin >> tmp_s;
+    auto transformer = RegularTransformer(tmp_s);
     auto automaton = transformer.Parse();
     automaton.Output();
     std::cout << '\n';
