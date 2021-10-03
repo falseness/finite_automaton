@@ -18,11 +18,10 @@ void FiniteAutomaton::InitStartAndEndVertexes(SubAutomaton&& sub_automaton) {
 }
 
 void FiniteAutomaton::Output() const {
-    static const string empty_word = "ε";
     std::cout << graph_.size() << '\n';
     for (int i = 0; i < graph_.size(); ++i) {
         for (auto& u : graph_[i]) {
-            string word_output = u.word.empty() ? empty_word : u.word;
+            string word_output = u.word.empty() ? kOutputEmptyWord : u.word;
             std::cout << i << ' ' << u.finish << ' ' << word_output << '\n';
         }
     }
@@ -69,3 +68,6 @@ void FiniteAutomaton::set_start(FiniteAutomaton::Vertex new_start) {
 FiniteAutomaton::Vertex FiniteAutomaton::get_start() const {
     return start_and_final_vertexes_->start_;
 }
+
+string FiniteAutomaton::kEmptyWord = "`";
+string FiniteAutomaton::kOutputEmptyWord = "ε";

@@ -6,7 +6,7 @@
 
 int main() {
 
-    auto transformer = RegularTransformer("(a+b d*)*c");
+    auto transformer = RegularTransformer("a+b(b)*+ε");
     auto automaton = transformer.Parse();
     automaton.Output();
     std::cout << '\n';
@@ -24,6 +24,7 @@ int main() {
     min_d_automaton.Output();
 
     string result = min_d_automaton.CreateRegularExpression();
-    std::cout << '\n' << result;
+    std::cout << '\n';
+    RegularTransformer::OutputExpression(result);
     return 0;
 }

@@ -14,6 +14,7 @@ class RegularTransformer {
     SubAutomaton OrdinaryParse(string::iterator, string::iterator);
     SubAutomaton RecursiveParse(string::iterator, string::iterator);
 public:
+    static void OutputExpression(const string&);
     explicit RegularTransformer(const string&);
     FiniteAutomaton Parse();
 };

@@ -1,11 +1,21 @@
 #include "transformer.h"
 #include <cassert>
+#include <iostream>
 
 RegularTransformer::RegularTransformer(const string& regular_expression) : result_() {
     regular_expression_ = "";
-    for (auto c : regular_expression) {
+    const char empty_symbol_start = -50;
+    const char empty_symbol_end = -75;
+    for (size_t i = 0; i < regular_expression.size(); ++i) {
+        char c = regular_expression[i];
         if (std::isspace(c) || c == '\0')
             continue;
+        if (i + 1 < regular_expression.size() &&
+            c == empty_symbol_start && regular_expression[i + 1] == empty_symbol_end) {
+            regular_expression_ += FiniteAutomaton::kEmptyWord;
+            ++i;
+            continue;
+        }
         regular_expression_ += c;
     }
     CheckBracketsBalance();
@@ -42,12 +52,16 @@ SubAutomaton RegularTransformer::ParseHere(
 SubAutomaton RegularTransformer::OrdinaryParse(string::iterator begin, string::iterator end) {
     for (auto it = begin; it != end; ++it) {
         char c = *it;
-        if ('a' <= c && c <= 'z')
+        if (('a' <= c && c <= 'z') || string(1, c) == FiniteAutomaton::kEmptyWord)
             continue;
         return ParseHere(begin, it, end);
     }
     string word;
-    std::copy(begin, end, std::back_inserter(word));
+    for (auto it = begin; it != end; ++it) {
+        if (string(1, (*it)) == FiniteAutomaton::kEmptyWord)
+            continue;
+        word += *it;
+    }
     return {result_, std::move(word)};
 
 }
@@ -88,7 +102,7 @@ FiniteAutomaton RegularTransformer::Parse() {
 
 void RegularTransformer::CheckBracketsBalance() {
     int depth = 0;
-    for (auto c:regular_expression_) {
+    for (auto c : regular_expression_) {
         if (c == '(') {
             ++depth;
             continue;
@@ -113,4 +127,13 @@ void RegularTransformer::DeleteUselessAsteriskSymbols() {
         --it;
     }
     regular_expression_ = std::move(new_expression);
+}
+
+void RegularTransformer::OutputExpression(const string& expression) {
+    for (auto u : expression) {
+        if (string(1, u) == FiniteAutomaton::kEmptyWord)
+            std::cout << FiniteAutomaton::kOutputEmptyWord;
+        else
+            std::cout << u;
+    }
 }

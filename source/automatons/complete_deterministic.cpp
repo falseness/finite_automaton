@@ -112,14 +112,20 @@ void CompleteDeterministicAutomaton::InitializeAlphabet(const vector<vector<Edge
 }
 
 string CompleteDeterministicAutomaton::CreateRegularExpression() const {
-    auto regular_expression_plus = [](string& regular_expression) {
-        if (regular_expression.empty())
+    auto regular_expression_plus = [](string& regular_expression, const string& word) {
+        if (regular_expression.empty()) {
             regular_expression = "(";
-        else
+        }
+        else {
             regular_expression += "+";
+        }
+        if (word.empty())
+            regular_expression += FiniteAutomaton::kEmptyWord;
+        else
+            regular_expression += word;
     };
 
-    auto tmp_graph = get_graph();
+    const auto& tmp_graph = get_graph();
 
     vector<vector<Edge>> graph(tmp_graph.size() + 1);
     graph[0].push_back({(FiniteAutomaton::Vertex)(get_start() + 1), ""});
@@ -140,8 +146,7 @@ string CompleteDeterministicAutomaton::CreateRegularExpression() const {
         FiniteAutomaton::Vertex deleting_vertex = graph.size() - 1;
         for (auto edge : graph.back()) {
             if (edge.finish == deleting_vertex) {
-                regular_expression_plus(cycles_regular);
-                cycles_regular += edge.word;
+                regular_expression_plus(cycles_regular, edge.word);
             }
             else
                 out_vertexes.push_back(std::move(edge));
@@ -168,17 +173,16 @@ string CompleteDeterministicAutomaton::CreateRegularExpression() const {
     string main_regular;
     for (const auto& edge : graph[0]) {
         if (edge.finish) {
-            if (!main_regular.empty())
-                main_regular += "+";
-            main_regular += edge.word;
+            regular_expression_plus(main_regular, edge.word);
         }
         else {
-            regular_expression_plus(cycles_regular);
-            cycles_regular += edge.word;
+            regular_expression_plus(cycles_regular, edge.word);
         }
     }
     if (!cycles_regular.empty())
         cycles_regular += ")*";
+    if (!main_regular.empty())
+        main_regular += ")";
 
     return cycles_regular + main_regular;
 }

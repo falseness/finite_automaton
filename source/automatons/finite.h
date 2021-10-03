@@ -33,6 +33,8 @@ protected:
     vector<vector<Edge>> graph_;
     unique_ptr<SubAutomaton> start_and_final_vertexes_;
 public:
+    static string kEmptyWord;
+    static string kOutputEmptyWord;
     [[nodiscard]] size_t size() const;
     [[nodiscard]] const vector<vector<Edge>>& get_graph() const;
     [[nodiscard]] const SubAutomaton& get_start_and_end_vertexes() const;
