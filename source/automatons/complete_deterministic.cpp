@@ -97,6 +97,7 @@ CompleteDeterministicAutomaton CompleteDeterministicAutomaton::CreateMinimalDete
         result.set_final(i, is_i_final);
     }
 
+    result.InitializeAlphabet(result.get_graph());
     return std::move(result);
 }
 
@@ -189,3 +190,19 @@ string CompleteDeterministicAutomaton::CreateRegularExpression() const {
 
 CompleteDeterministicAutomaton::CompleteDeterministicAutomaton(size_t count, FiniteAutomaton::Vertex start) :
     DeterministicAutomaton(count, start) {}
+
+bool CompleteDeterministicAutomaton::Contain(const string& word) {
+    for (const auto& c : word) {
+        auto it = std::lower_bound(alphabet_.begin(), alphabet_.end(), string(1, c));
+        if (it == alphabet_.end() || (*it) != string(1, c))
+            return false;
+    }
+    FiniteAutomaton::Vertex pos = get_start();
+    for (const auto& c : word) {
+        auto it = std::lower_bound(alphabet_.begin(), alphabet_.end(), string(1, c));
+        const auto& edge = graph_[pos][it - alphabet_.begin()];
+        assert(edge.word == string(1, c));
+        pos = edge.finish;
+    }
+    return is_final(pos);
+}
