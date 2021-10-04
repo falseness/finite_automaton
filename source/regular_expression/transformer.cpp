@@ -1,23 +1,10 @@
 #include "transformer.h"
 #include <cassert>
 #include <iostream>
+#include <source/regular_expression/correct_string.h>
 
 RegularTransformer::RegularTransformer(const string& regular_expression) : result_() {
-    regular_expression_ = "";
-    const char empty_symbol_start = -50;
-    const char empty_symbol_end = -75;
-    for (size_t i = 0; i < regular_expression.size(); ++i) {
-        char c = regular_expression[i];
-        if (std::isspace(c) || c == '\0')
-            continue;
-        if (i + 1 < regular_expression.size() &&
-            c == empty_symbol_start && regular_expression[i + 1] == empty_symbol_end) {
-            regular_expression_ += FiniteAutomaton::kEmptyWord;
-            ++i;
-            continue;
-        }
-        regular_expression_ += c;
-    }
+    regular_expression_ = CorrectString(regular_expression, FiniteAutomaton::kEmptyWord);
     CheckBracketsBalance();
     DeleteUselessAsteriskSymbols();
 }

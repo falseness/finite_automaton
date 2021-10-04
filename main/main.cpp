@@ -4,8 +4,12 @@
 #include <source/deterministic_automaton/transformer.h>
 #include <source/automatons/complete_deterministic.h>
 #include <fstream>
+#include <source/user_interface.h>
 
 int main() {
+    UserInterface u;
+    u.Run();
+    /*
     std::ifstream fin("input.txt");
     string tmp_s;
     fin >> tmp_s;
@@ -28,6 +32,6 @@ int main() {
 
     string result = min_d_automaton.CreateRegularExpression();
     std::cout << '\n';
-    RegularTransformer::OutputExpression(result);
+    RegularTransformer::OutputExpression(result);*/
     return 0;
 }

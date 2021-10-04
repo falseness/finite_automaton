@@ -29,6 +29,7 @@ public:
     FiniteAutomaton(size_t, Vertex);
     void InitStartAndEndVertexes(SubAutomaton &&sub_automaton);
     void Output() const;
+    void Input(std::ifstream&);
 protected:
     vector<vector<Edge>> graph_;
     unique_ptr<SubAutomaton> start_and_final_vertexes_;
@@ -44,4 +45,5 @@ public:
     void set_start(Vertex);
     [[nodiscard]] Vertex get_start() const;
     void AddNewEdge(Vertex, Edge&&);
+    void Clear();
 };

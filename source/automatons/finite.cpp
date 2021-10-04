@@ -2,6 +2,9 @@
 #include <source/automatons/sub_automaton.h>
 #include <cassert>
 #include <iostream>
+#include <fstream>
+#include <source/regular_expression/transformer.h>
+#include <source/regular_expression/correct_string.h>
 
 FiniteAutomaton::Vertex FiniteAutomaton::AddNewVertex() {
     graph_.emplace_back();
@@ -18,17 +21,22 @@ void FiniteAutomaton::InitStartAndEndVertexes(SubAutomaton&& sub_automaton) {
 }
 
 void FiniteAutomaton::Output() const {
-    std::cout << graph_.size() << '\n';
-    for (int i = 0; i < graph_.size(); ++i) {
+    size_t edges_count = 0;
+    for (const auto& edges :graph_) {
+        edges_count += edges.size();
+    }
+    std::cout << graph_.size() << ' ' << edges_count << '\n';
+    for (size_t i = 0; i < graph_.size(); ++i) {
         for (auto& u : graph_[i]) {
             string word_output = u.word.empty() ? kOutputEmptyWord : u.word;
             std::cout << i << ' ' << u.finish << ' ' << word_output << '\n';
         }
     }
-    std::cout << "START\n";
+    //std::cout << "START\n";
     std::cout << start_and_final_vertexes_->start_ << '\n';
-    std::cout << "END\n";
-    for (auto u:start_and_final_vertexes_->final_vertexes_) {
+    //std::cout << "END\n";
+    std::cout << start_and_final_vertexes_->final_vertexes_.size() << '\n';
+    for (auto u : start_and_final_vertexes_->final_vertexes_) {
         std::cout << u << ' ';
     }
 }
@@ -69,5 +77,34 @@ FiniteAutomaton::Vertex FiniteAutomaton::get_start() const {
     return start_and_final_vertexes_->start_;
 }
 
+void FiniteAutomaton::Input(std::ifstream& fin) {
+    size_t count, edges_count;
+    fin >> count >> edges_count;
+    graph_.resize(count);
+    for (size_t i = 0; i < edges_count; ++i) {
+        FiniteAutomaton::Vertex a, b;
+        string word;
+        fin >> a >> b >> word;
+        graph_[a].push_back({b, CorrectString(word, "")});
+    }
+    FiniteAutomaton::Vertex start_vertex;
+    fin >> start_vertex;
+    start_and_final_vertexes_ = make_unique<SubAutomaton>(start_vertex);
+    size_t final_count;
+    fin >> final_count;
+    for (size_t i = 0; i < final_count; ++i) {
+        FiniteAutomaton::Vertex final;
+        fin >> final;
+        set_final(final, true);
+    }
+}
+
+
 string FiniteAutomaton::kEmptyWord = "`";
 string FiniteAutomaton::kOutputEmptyWord = "ε";
+
+void FiniteAutomaton::Clear() {
+    FiniteAutomaton result;
+    *this = std::move(result);
+}
+
