@@ -54,22 +54,30 @@ TEST_F(SomeTestCase, CompleteAutomatonGraph) {
     }
 }
 
-TEST_F(SomeTestCase, ThreeAutomatonsThreeLettersCheck) {
-    CompleteDeterministicAutomaton automaton("(ab(c)*+da)+hi+(ab)*(c*d)*+fef+(da)");
+TEST_F(SomeTestCase, FourAutomatonsThreeLettersCheck) {
+    std::string regular_expression = "(ab(c)*+da)+hi+(ab)*(c*d)*+fef+(da)";
+    // add some chars for full alphabet
+    regular_expression += '+';
+    for (char c = 'a'; c <= 'z'; ++c) {
+        regular_expression += c;
+    }
+    CompleteDeterministicAutomaton automaton(regular_expression);
     CompleteDeterministicAutomaton minimal_automaton = automaton.CreateMinimalDeterministicAutomaton();
     CompleteDeterministicAutomaton another(minimal_automaton.CreateRegularExpression());
+    CompleteDeterministicAutomaton complement_automaton = automaton.CreateComplement();
 
     for (char c1 = 'a'; c1 <= 'z'; ++c1) {
         for (char c2 = 'a'; c2 <= 'z'; ++c2) {
             for (char c3 = 'a'; c3 <= 'z'; ++c3) {
-                string regular_expression;
-                regular_expression += c1;
-                regular_expression += c2;
-                regular_expression += c3;
-                bool b1 = automaton.Contain(regular_expression);
-                bool b2 = minimal_automaton.Contain(regular_expression);
-                bool b3 = another.Contain(regular_expression);
-                EXPECT_TRUE(b1 == b2 && b2 == b3);
+                string word;
+                word += c1;
+                word += c2;
+                word += c3;
+                bool b1 = automaton.Contain(word);
+                bool b2 = minimal_automaton.Contain(word);
+                bool b3 = another.Contain(word);
+                bool b4 = complement_automaton.Contain(word);
+                EXPECT_TRUE(b1 == b2 && b2 == b3 && b4 != b1);
             }
         }
     }
