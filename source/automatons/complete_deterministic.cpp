@@ -1,5 +1,6 @@
 #include "complete_deterministic.h"
 #include <cassert>
+#include <source/regular_expression/transformer.h>
 
 CompleteDeterministicAutomaton::CompleteDeterministicAutomaton(const DeterministicAutomaton& automaton) {
     SubAutomaton tmp(automaton.get_start_and_end_vertexes());
@@ -97,6 +98,7 @@ CompleteDeterministicAutomaton CompleteDeterministicAutomaton::CreateMinimalDete
         result.set_final(i, is_i_final);
     }
 
+    result.DeleteNoPathVertexes();
     result.InitializeAlphabet(result.get_graph());
     return std::move(result);
 }
@@ -206,3 +208,7 @@ bool CompleteDeterministicAutomaton::Contain(const string& word) {
     }
     return is_final(pos);
 }
+
+CompleteDeterministicAutomaton::CompleteDeterministicAutomaton(const string& regular_expression) :
+    CompleteDeterministicAutomaton(DeterministicAutomaton(NoEmptyWordsAutomaton(
+            RegularTransformer(regular_expression).Parse()))) {}

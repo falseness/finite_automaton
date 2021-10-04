@@ -1,4 +1,5 @@
 #include "sub_automaton.h"
+#include <set>
 
 SubAutomaton::SubAutomaton(FiniteAutomaton& automaton, string&& command){
     start_ = automaton.AddNewVertex();

@@ -11,4 +11,5 @@ public:
     [[nodiscard]] CompleteDeterministicAutomaton CreateMinimalDeterministicAutomaton() const;
     [[nodiscard]] string CreateRegularExpression() const;
     bool Contain(const string&);
+    explicit CompleteDeterministicAutomaton(const string&);
 };

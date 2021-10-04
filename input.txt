@@ -1,4 +1,4 @@
-automaton | delete empty words | to dfa | to complete dfa | to minimal
+automaton | delete empty words | to dfa | to complete dfa | to minimal | to regular expression
 4 3
 0 1 ε
 1 2 a

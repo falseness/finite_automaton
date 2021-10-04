@@ -31,6 +31,9 @@ public:
     void Output() const;
     void Input(std::ifstream&);
 protected:
+    void DeleteNoPathVertexes();
+    void DFS(FiniteAutomaton::Vertex, vector<uint8_t>&, FiniteAutomaton&, vector<FiniteAutomaton::Vertex>&) const;
+protected:
     vector<vector<Edge>> graph_;
     unique_ptr<SubAutomaton> start_and_final_vertexes_;
 public:

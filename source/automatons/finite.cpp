@@ -108,3 +108,33 @@ void FiniteAutomaton::Clear() {
     *this = std::move(result);
 }
 
+void FiniteAutomaton::DeleteNoPathVertexes() {
+    vector<uint8_t> used(size(), 0);
+
+    FiniteAutomaton new_automaton;
+    vector<FiniteAutomaton::Vertex> new_numeration(graph_.size());
+    new_numeration[get_start()] = new_automaton.AddNewVertex();
+    DFS(get_start(), used, new_automaton, new_numeration);
+
+    SubAutomaton new_start_and_final_vertexes(new_numeration[get_start()]);
+    for (auto v : start_and_final_vertexes_->final_vertexes_) {
+        if (used[v])
+            new_start_and_final_vertexes.final_vertexes_.insert(new_numeration[v]);
+    }
+
+    graph_ = std::move(new_automaton.graph_);
+    start_and_final_vertexes_ = std::make_unique<SubAutomaton>(std::move(new_start_and_final_vertexes));
+}
+
+void FiniteAutomaton::DFS(FiniteAutomaton::Vertex v, vector<uint8_t>& used,
+                          FiniteAutomaton& new_automaton, vector<FiniteAutomaton::Vertex>& new_numeration) const {
+    used[v] = true;
+    for (const auto& edge : graph_[v]) {
+        if (!used[edge.finish]) {
+            new_numeration[edge.finish] = new_automaton.AddNewVertex();
+            DFS(edge.finish, used, new_automaton, new_numeration);
+        }
+        new_automaton.AddNewEdge(new_numeration[v], {new_numeration[edge.finish], edge.word});
+    }
+}
+
