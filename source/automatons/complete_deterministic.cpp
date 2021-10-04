@@ -212,3 +212,11 @@ bool CompleteDeterministicAutomaton::Contain(const string& word) {
 CompleteDeterministicAutomaton::CompleteDeterministicAutomaton(const string& regular_expression) :
     CompleteDeterministicAutomaton(DeterministicAutomaton(NoEmptyWordsAutomaton(
             RegularTransformer(regular_expression).Parse()))) {}
+
+CompleteDeterministicAutomaton CompleteDeterministicAutomaton::CreateComplement() const {
+    CompleteDeterministicAutomaton result(*this);
+    for (FiniteAutomaton::Vertex vertex = 0; vertex < graph_.size(); ++vertex) {
+        result.set_final(vertex, !is_final(vertex));
+    }
+    return std::move(result);
+}

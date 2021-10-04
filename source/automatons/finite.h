@@ -23,11 +23,11 @@ public:
         string word;
     };
     FiniteAutomaton() = default;
-    FiniteAutomaton(const FiniteAutomaton&) = delete;
+    FiniteAutomaton(const FiniteAutomaton&);
     FiniteAutomaton(FiniteAutomaton&&) = default;
     FiniteAutomaton& operator=(FiniteAutomaton&&) = default;
     FiniteAutomaton(size_t, Vertex);
-    void InitStartAndEndVertexes(SubAutomaton &&sub_automaton);
+    void InitStartAndEndVertexes(SubAutomaton&& sub_automaton);
     void Output() const;
     void Input(std::ifstream&);
 protected:

@@ -138,3 +138,6 @@ void FiniteAutomaton::DFS(FiniteAutomaton::Vertex v, vector<uint8_t>& used,
     }
 }
 
+FiniteAutomaton::FiniteAutomaton(const FiniteAutomaton& automaton) : graph_(automaton.graph_), start_and_final_vertexes_(
+        std::make_unique<SubAutomaton>(*automaton.start_and_final_vertexes_)) {}
+

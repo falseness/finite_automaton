@@ -79,10 +79,12 @@ bool get_bit(size_t mask, size_t i) {
     return (mask >> i) & 1;
 }
 
-TEST_F(SomeTestCase, ThreeAutomatonStressTest) {
+TEST_F(SomeTestCase, FourAutomatonStressTest) {
     CompleteDeterministicAutomaton automaton("aaab+a*bbbb+(abbb)*aa(b+a)+(ba)*bbaaa+b + (aba*(baba+abaab*))");
     CompleteDeterministicAutomaton minimal_automaton = automaton.CreateMinimalDeterministicAutomaton();
     CompleteDeterministicAutomaton another(minimal_automaton.CreateRegularExpression());
+    CompleteDeterministicAutomaton complement_automaton = minimal_automaton.CreateComplement();
+
     const size_t word_size = 15;
     for (size_t bit_word = 0; bit_word < (1ULL << word_size); ++bit_word) {
         string regular_expression;
@@ -95,6 +97,42 @@ TEST_F(SomeTestCase, ThreeAutomatonStressTest) {
         bool b1 = automaton.Contain(regular_expression);
         bool b2 = minimal_automaton.Contain(regular_expression);
         bool b3 = another.Contain(regular_expression);
-        EXPECT_TRUE(b1 == b2 && b2 == b3);
+        bool b4 = complement_automaton.Contain(regular_expression);
+        EXPECT_TRUE(b1 == b2 && b2 == b3 && b4 != b1);
     }
 }
+
+TEST_F(SomeTestCase, StressMinimalDFATest) {
+    CompleteDeterministicAutomaton automaton("aaab*(a+bbbb*ccc)(zzzzx*+oooo)*(a+l(f+qqz))+ee*cc+asp(da*+qmmm)*");
+    CompleteDeterministicAutomaton minimal_automaton = automaton.CreateMinimalDeterministicAutomaton();
+
+    size_t min_size = minimal_automaton.size();
+    const size_t iteration_count = 20;
+    for (size_t i = 0; i < iteration_count; ++i) {
+        minimal_automaton = std::move(CompleteDeterministicAutomaton(
+                minimal_automaton.CreateRegularExpression()).CreateMinimalDeterministicAutomaton());
+        EXPECT_TRUE(minimal_automaton.size() == min_size);
+    }
+}
+
+TEST_F(SomeTestCase, StressCompleteDFATest) {
+    string regular_expression = "z";
+    const size_t iteration_count = 17;
+    string string_contain = "z";
+    for (char i = 0; i < iteration_count; ++i) {
+        CompleteDeterministicAutomaton automaton(regular_expression);
+
+        EXPECT_TRUE(automaton.Contain(string_contain) &&
+            automaton.CreateMinimalDeterministicAutomaton().Contain(string_contain) &&
+            !automaton.CreateComplement().Contain(string_contain));
+
+        regular_expression = "(" + regular_expression + ")*";
+        char new_char = static_cast<char>(i + 'a');
+
+        regular_expression += new_char;
+        string_contain += string_contain;
+        string_contain += new_char;
+    }
+}
+
+
