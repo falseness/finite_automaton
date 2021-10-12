@@ -10,6 +10,7 @@ class UserInterface {
 
     void InputAutomaton(std::ifstream&);
     void InputRegularExpression(std::ifstream&);
+    void InputReversePolishNotationRegularExpression(std::ifstream&);
 
     void CommandAutomaton(FiniteAutomaton&&);
     void CommandRegularExpression(string&&);
@@ -23,6 +24,7 @@ public:
     void Run();
     static string kInputAutomaton;
     static string kInputRegularExpression;
+    static string kInputReversePolishNotationRegularExpression;
     static string kDeleteEmptyWords;
     static string kConvertToDFA;
     static string kConvertToCompleteDFA;

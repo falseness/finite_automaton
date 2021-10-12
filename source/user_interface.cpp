@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cassert>
 #include <source/regular_expression/transformer.h>
+#include <source/regular_expression/parse_reverse_polish_notation.h>
 
 void UserInterface::Run() {
     std::ifstream fin("input.txt");
@@ -16,6 +17,9 @@ void UserInterface::Run() {
         InputAutomaton(fin);
     else if (input_command == kInputRegularExpression)
         InputRegularExpression(fin);
+    else if (input_command == kInputReversePolishNotationRegularExpression) {
+        InputReversePolishNotationRegularExpression(fin);
+    }
     else
         assert(false);
 }
@@ -31,6 +35,12 @@ void UserInterface::InputRegularExpression(std::ifstream& fin) {
     string result;
     getline(fin, result);
     CommandRegularExpression(std::move(result));
+}
+
+void UserInterface::InputReversePolishNotationRegularExpression(std::ifstream& fin) {
+    string result;
+    getline(fin, result);
+    CommandRegularExpression(std::move(ParseRegularExpressionInReversePolishNotation(result)));
 }
 
 void UserInterface::CommandAutomaton(FiniteAutomaton&& automaton) {
@@ -123,6 +133,7 @@ string UserInterface::InputCommand() {
 
 string UserInterface::kInputAutomaton = "automaton";
 string UserInterface::kInputRegularExpression = "regular expression";
+string UserInterface::kInputReversePolishNotationRegularExpression = "reverse polish notation";
 
 
 string UserInterface::kDeleteEmptyWords = "delete empty words";
