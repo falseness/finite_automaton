@@ -22,7 +22,9 @@ set(    GENERAL_SOURCE
         source/automatons/no_empty_words.cpp source/automatons/no_empty_words.cpp
         source/automatons/complete_deterministic.cpp
         source/user_interface.cpp
-        source/regular_expression/correct_string.cpp)
+        source/regular_expression/correct_string.cpp
+        source/regular_expression/parse_reverse_polish_notation.cpp
+        )
 
 set(    MAIN_SOURCE
         main/main.cpp

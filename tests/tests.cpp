@@ -1,5 +1,6 @@
 #include "tests.h"
 #include <source/automatons/complete_deterministic.h>
+#include <source/regular_expression/parse_reverse_polish_notation.h>
 
 
 void SomeTestCase::SetUp() {
@@ -143,4 +144,17 @@ TEST_F(SomeTestCase, StressCompleteDFATest) {
     }
 }
 
+TEST_F(SomeTestCase, TestReversePolishNotation) {
+    string reverse_polish_notation_expression = "ab+*c.d*a.+";
+    string normal_expression = "(a + b)*c+(d*a)";
 
+    CompleteDeterministicAutomaton reverse_notation_automaton(
+            ParseRegularExpressionInReversePolishNotation(reverse_polish_notation_expression));
+    CompleteDeterministicAutomaton normal_automaton(normal_expression);
+
+
+    EXPECT_TRUE(normal_automaton.Contain("aac") && normal_automaton.Contain("da") &&
+        !normal_automaton.Contain("d"));
+    EXPECT_TRUE(reverse_notation_automaton.Contain("aac") && reverse_notation_automaton.Contain("da") &&
+                !reverse_notation_automaton.Contain("d"));
+}
