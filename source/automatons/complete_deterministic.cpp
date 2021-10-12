@@ -115,19 +115,6 @@ void CompleteDeterministicAutomaton::InitializeAlphabet(const vector<vector<Edge
 }
 
 string CompleteDeterministicAutomaton::CreateRegularExpression() const {
-    auto regular_expression_plus = [](string& regular_expression, const string& word) {
-        if (regular_expression.empty()) {
-            regular_expression = "(";
-        }
-        else {
-            regular_expression += "+";
-        }
-        if (word.empty())
-            regular_expression += FiniteAutomaton::kEmptyWord;
-        else
-            regular_expression += word;
-    };
-
     const auto& tmp_graph = get_graph();
 
     vector<vector<Edge>> graph(tmp_graph.size() + 1);
@@ -145,26 +132,42 @@ string CompleteDeterministicAutomaton::CreateRegularExpression() const {
     assert(!graph.empty());
     while (graph.size() != 1) {
         vector<Edge> out_vertexes;
-        string cycles_regular;
+        vector<Edge> cycle_edges;
+
         FiniteAutomaton::Vertex deleting_vertex = graph.size() - 1;
-        for (auto edge : graph.back()) {
+        for (auto& edge : graph.back()) {
             if (edge.finish == deleting_vertex) {
-                regular_expression_plus(cycles_regular, edge.word);
+                cycle_edges.push_back(std::move(edge));
             }
             else
                 out_vertexes.push_back(std::move(edge));
         }
-        if (!cycles_regular.empty())
+        string cycles_regular;
+        DeleteSameVertexesEdges(cycle_edges);
+        if (!cycle_edges.empty()) {
+            assert(cycle_edges.size() == 1);
+            cycles_regular = "(";
+            cycles_regular += cycle_edges.back().word;
             cycles_regular += ")*";
+        }
+        DeleteSameVertexesEdges(out_vertexes);
+
         graph.pop_back();
         for (FiniteAutomaton::Vertex i = 0; i < graph.size(); ++i) {
             vector<FiniteAutomaton::Edge> new_edges;
+            vector<FiniteAutomaton::Edge> edges_to_deleted_vertex;
             for (auto& old_edge : graph[i]) {
                 if (old_edge.finish != deleting_vertex) {
                     new_edges.push_back(std::move(old_edge));
                     continue;
                 }
-                for (const auto& out_edge : out_vertexes) {
+                edges_to_deleted_vertex.push_back(old_edge);
+            }
+            DeleteSameVertexesEdges(edges_to_deleted_vertex);
+            if (!edges_to_deleted_vertex.empty()) {
+                assert(edges_to_deleted_vertex.size() == 1);
+                const auto& old_edge = edges_to_deleted_vertex.back();
+                for (const auto &out_edge: out_vertexes) {
                     new_edges.push_back({out_edge.finish, old_edge.word + cycles_regular + out_edge.word});
                 }
             }
@@ -174,18 +177,26 @@ string CompleteDeterministicAutomaton::CreateRegularExpression() const {
 
     string cycles_regular;
     string main_regular;
-    for (const auto& edge : graph[0]) {
+    vector<FiniteAutomaton::Edge> cycle_edges;
+    vector<FiniteAutomaton::Edge> main_edges;
+
+    for (auto& edge : graph[0]) {
         if (edge.finish) {
-            regular_expression_plus(main_regular, edge.word);
+            main_edges.emplace_back(std::move(edge));
         }
         else {
-            regular_expression_plus(cycles_regular, edge.word);
+            cycle_edges.emplace_back(std::move(edge));
         }
     }
-    if (!cycles_regular.empty())
-        cycles_regular += ")*";
-    if (!main_regular.empty())
-        main_regular += ")";
+    DeleteSameVertexesEdges(main_edges);
+    DeleteSameVertexesEdges(cycle_edges);
+    if (!cycle_edges.empty()) {
+        cycles_regular = std::move(cycle_edges.back().word);
+        cycles_regular += "*";
+    }
+    if (!main_edges.empty()) {
+        main_regular = std::move(main_edges.back().word);
+    }
 
     return cycles_regular + main_regular;
 }
@@ -253,4 +264,42 @@ bool CompleteDeterministicAutomaton::IsIsomorphic(const CompleteDeterministicAut
             return false;
     }
     return true;
+}
+
+bool CompleteDeterministicAutomaton::CompareEdges(
+        const FiniteAutomaton::Edge& edge1, const FiniteAutomaton::Edge& edge2) {
+    return edge1.finish < edge2.finish;
+}
+
+void CompleteDeterministicAutomaton::DeleteSameVertexesEdges(vector<FiniteAutomaton::Edge>& out_vertexes) {
+    sort(out_vertexes.begin(), out_vertexes.end(), CompareEdges);
+    vector<Edge> deleted_same_vertexes;
+    for (size_t i = 0; i < out_vertexes.size(); ++i) {
+        string regular_expression;
+        FiniteAutomaton::Vertex vertex = out_vertexes[i].finish;
+        bool was_empty_word = false;
+        size_t count_vertexes = 0;
+        while (i < out_vertexes.size() && out_vertexes[i].finish == vertex) {
+            if (out_vertexes[i].word.empty()) {
+                was_empty_word = true;
+            }
+            else if (!regular_expression.empty())
+                regular_expression += "+" + out_vertexes[i].word;
+            else
+                regular_expression += "(" + out_vertexes[i].word;
+            ++i;
+            ++count_vertexes;
+        }
+        if (!regular_expression.empty() && was_empty_word) {
+            regular_expression += "+" + FiniteAutomaton::kEmptyWord;
+        }
+        if (!regular_expression.empty())
+            regular_expression += ")";
+        --i;
+        if (count_vertexes == 1)
+            regular_expression = out_vertexes[i].word;
+
+        deleted_same_vertexes.push_back({vertex, regular_expression});
+    }
+    out_vertexes = std::move(deleted_same_vertexes);
 }

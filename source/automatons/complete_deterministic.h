@@ -5,6 +5,8 @@
 class CompleteDeterministicAutomaton : public DeterministicAutomaton {
     vector<string> alphabet_;
     void InitializeAlphabet(const vector<vector<Edge>>&);
+    static bool CompareEdges(const FiniteAutomaton::Edge&, const FiniteAutomaton::Edge&);
+    static void DeleteSameVertexesEdges(vector<FiniteAutomaton::Edge>&);
 public:
     CompleteDeterministicAutomaton(size_t, FiniteAutomaton::Vertex);
     explicit CompleteDeterministicAutomaton(const DeterministicAutomaton&);
