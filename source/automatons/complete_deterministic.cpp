@@ -220,3 +220,37 @@ CompleteDeterministicAutomaton CompleteDeterministicAutomaton::CreateComplement(
     }
     return std::move(result);
 }
+
+bool CompleteDeterministicAutomaton::IsIsomorphic(const CompleteDeterministicAutomaton& automaton) const {
+    if (size() != automaton.size())
+        return false;
+    if (alphabet_ != automaton.alphabet_)
+        return false;
+
+    vector<FiniteAutomaton::Vertex> isomorphism(size(), size());
+    vector<FiniteAutomaton::Vertex> dfs_stack;
+    isomorphism[get_start()] = automaton.get_start();
+    dfs_stack.push_back(get_start());
+
+    while (!dfs_stack.empty()) {
+        FiniteAutomaton::Vertex vertex = dfs_stack.back();
+        dfs_stack.pop_back();
+        for (size_t i = 0; i < graph_[vertex].size(); ++i) {
+            FiniteAutomaton::Vertex another_vertex = graph_[vertex][i].finish;
+            FiniteAutomaton::Vertex isomorphic_vertex = automaton.graph_[isomorphism[vertex]][i].finish;
+            if (isomorphism[another_vertex] == size()) {
+                isomorphism[another_vertex] = isomorphic_vertex;
+                dfs_stack.push_back(another_vertex);
+            }
+            else if (isomorphism[another_vertex] != isomorphic_vertex){
+                return false;
+            }
+        }
+    }
+    for (FiniteAutomaton::Vertex i = 0; i < isomorphism.size(); ++i) {
+        assert(isomorphism[i] != size());
+        if (is_final(i) != automaton.is_final(isomorphism[i]))
+            return false;
+    }
+    return true;
+}

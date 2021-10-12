@@ -16,4 +16,6 @@ public:
     bool Contain(const string&);
     explicit CompleteDeterministicAutomaton(const string&);
     [[nodiscard]] CompleteDeterministicAutomaton CreateComplement() const;
+    // both automatons should be minimal automatons
+    bool IsIsomorphic(const CompleteDeterministicAutomaton&) const;
 };

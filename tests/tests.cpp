@@ -1,6 +1,7 @@
 #include "tests.h"
 #include <source/automatons/complete_deterministic.h>
 #include <source/regular_expression/parse_reverse_polish_notation.h>
+#include <cstdlib>
 
 
 void SomeTestCase::SetUp() {
@@ -157,4 +158,78 @@ TEST_F(SomeTestCase, TestReversePolishNotation) {
         !normal_automaton.Contain("d"));
     EXPECT_TRUE(reverse_notation_automaton.Contain("aac") && reverse_notation_automaton.Contain("da") &&
                 !reverse_notation_automaton.Contain("d"));
+}
+
+TEST_F(SomeTestCase, IsomorhpicDFATest1) {
+    CompleteDeterministicAutomaton automaton1 =
+            CompleteDeterministicAutomaton("(a*b)*").CreateMinimalDeterministicAutomaton();
+    CompleteDeterministicAutomaton automaton2 =
+            CompleteDeterministicAutomaton("(b + a)*b + ε").CreateMinimalDeterministicAutomaton();
+    EXPECT_TRUE(automaton1.IsIsomorphic(automaton2));
+}
+
+TEST_F(SomeTestCase, IsomorhpicDFATest2) {
+    CompleteDeterministicAutomaton automaton1 =
+            CompleteDeterministicAutomaton("(a+c)b*").CreateMinimalDeterministicAutomaton();
+    CompleteDeterministicAutomaton automaton2 =
+            CompleteDeterministicAutomaton("(c + a + b)*").CreateMinimalDeterministicAutomaton();
+    EXPECT_FALSE(automaton1.IsIsomorphic(automaton2));
+}
+
+int GetRandInt(int min_value, int max_value) {
+    return rand() % (max_value - min_value + 1) + min_value;
+}
+
+string GenerateReversePolishNotationExpression(const size_t iteration_count) {
+    assert(iteration_count >= 1);
+
+    size_t expressions_count = 0;
+    string result;
+    for (size_t i = 0; i < iteration_count; ++i) {
+        if (!expressions_count || GetRandInt(0, 1)) {
+            result += GetRandInt('a', 'z');
+            ++expressions_count;
+            continue;
+        }
+        int rand_int = GetRandInt(0, 2);
+        if (expressions_count <= 1 || !rand_int) {
+            result += "*";
+            continue;
+        }
+        --expressions_count;
+        if (rand_int == 1) {
+            result += "+";
+        }
+        else {
+            result += ".";
+        }
+    }
+    while (expressions_count > 1) {
+        if (GetRandInt(0, 1))
+            result += "+";
+        else
+            result += '.';
+        --expressions_count;
+    }
+    return std::move(result);
+}
+
+TEST_F(SomeTestCase, IsomorphicStressTest) {
+    srand(0);
+    const size_t max_expression_length = 15;
+    const size_t iteration_count = 100;
+    for (size_t expression_length = 1; expression_length <= max_expression_length; ++expression_length) {
+        for (size_t i = 0; i < iteration_count; ++i) {
+            string reverse_polish_notation_expression = GenerateReversePolishNotationExpression(expression_length);
+            string normal_notation_expression =
+                    ParseRegularExpressionInReversePolishNotation(reverse_polish_notation_expression);
+
+            CompleteDeterministicAutomaton automaton =
+                    CompleteDeterministicAutomaton(normal_notation_expression).CreateMinimalDeterministicAutomaton();
+            CompleteDeterministicAutomaton same_automaton = CompleteDeterministicAutomaton(
+                    automaton.CreateRegularExpression()).CreateMinimalDeterministicAutomaton();
+
+            EXPECT_TRUE(automaton.IsIsomorphic(same_automaton));
+        }
+    }
 }
