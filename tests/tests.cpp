@@ -233,3 +233,8 @@ TEST_F(SomeTestCase, IsomorphicStressTest) {
         }
     }
 }
+
+
+void Practice1TestCase::SetUp() {}
+
+void Practice1TestCase::TearDown() {}

@@ -24,6 +24,7 @@ set(    GENERAL_SOURCE
         source/user_interface.cpp
         source/regular_expression/correct_string.cpp
         source/regular_expression/parse_reverse_polish_notation.cpp
+        source/practice1/parser.cpp
         )
 
 set(    MAIN_SOURCE
