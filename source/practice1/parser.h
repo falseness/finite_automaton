@@ -10,7 +10,7 @@ class ReversePolishNotationParser {
     static bool IsCorrectChar(char c);
     static std::string DeleteSpases(const std::string&);
 public:
-    static int8_t Parse(const std::string&, size_t l, size_t k);
+    static int8_t Parse(const std::string&, size_t k, size_t l);
 };
 
 class RegularExpressionParameters {

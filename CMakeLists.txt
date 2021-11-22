@@ -39,6 +39,7 @@ find_package(Threads REQUIRED)
 
 set(TEST_SOURCES
         tests/tests.cpp
+        tests/practice1.cpp
         ${GENERAL_SOURCE})
 
 add_executable(test ${TEST_SOURCES})

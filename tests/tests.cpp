@@ -180,7 +180,7 @@ int GetRandInt(int min_value, int max_value) {
     return rand() % (max_value - min_value + 1) + min_value;
 }
 
-string GenerateReversePolishNotationExpression(const size_t iteration_count) {
+string GenerateReversePolishNotationExpression(size_t iteration_count) {
     assert(iteration_count >= 1);
 
     size_t expressions_count = 0;
@@ -233,8 +233,3 @@ TEST_F(SomeTestCase, IsomorphicStressTest) {
         }
     }
 }
-
-
-void Practice1TestCase::SetUp() {}
-
-void Practice1TestCase::TearDown() {}
