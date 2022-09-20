@@ -1,66 +1,67 @@
 # finite_automation
 
-## Инструкция: 
-- скомпилировать - ./compile.sh
-- запустить (после компиляции) - ./run.sh
-- запустить тесты (после компиляции) - ./test.sh
+## Instructions: 
+- compile - ./compile.sh
+- run (after compilation) - ./run.sh
+- run tests (after compilation) - ./test.sh
 
-Вводить данные нужно в input.txt.
+Input data file - input.txt
 
-## Формат данных:
-первая строка - последовательность команд, разделенных |
+## Input format:
+The first line contains a sequence of commands separated by |
 
-следующие строки - ввод автомата/регулярного выражения.
+in the next lines contain input of automaton/regular expression.
 
-Команды представляют собой текстовые строки. 
-Первая команда обязательно должна быть на ввод автомата/регулярного выражения.
-Больше команды ввода не должны встречаться.
-После последней команды | не нужен.
+Commands are in text format.
+The first command is an input of either automaton or regular expression.
+There should not be more commands for input automaton or regular expression.
+After the last, commands there should not be |
 
-## Что умееть программа и соответствующая команда:
-- считывать конечный автомат - automaton
-- считывать регулярное выражение - regular expression
-- считывать регулярное выражение в обратной польской нотации - reverse polish notation
-- преобразовывать регулярное выражение в конечный автомат - to automaton
-- удалить пустые слова из конечного автомата - delete empty words
-- преобразовать КА без пустых слов в детерминированный конечный автомат - to dfa
-- преобразовать ДКА в полный ДКА - to complete dfa
-- преобразовать ПДКА в минимальный ПДКА - to minimal
-- преобразовать минимальный ПДКА в регулярное выражени - to regular expression
+## What command means:
+- `automaton` - reads finite automaton 
+- `regular expression` - reads a regular expression 
+- `reverse polish notation` - reads regular expression in reverse polish notation
+- `to automaton` - converts the regular expression to automaton
+- `delete empty words` - deletes empty words from a finite automaton
+- `to dfa` - converts FA without empty words to a deterministic finite automaton
+- `to complete dfa` - converts DFA to complete DFA
+- `to minimal` - converts CDFA to minimal CDFA
+- `to regular expression` - converts minimal CDFA to regular expression
 
-Как видно из команд, пока что предыдущая команда детерминирует следующую. 
-Это значит, что нельзя написать, например, automaton | to complete dfa, т.к. перед to complete dfa должна идти команда to dfa.
+As seen, for now, every previous command determines the next one.
+For example, it means, that writing something like `automaton | to complete dfa` is prohibited, because before `complete dfa` should be preceded by `to dfa`   
 
-## Формат ввода/вывода регулярного выражения
-Допустимые символы: строчные латинские буквы, символ `ε` для пустого слова и символы `()+*`
+## Format of input/output of regular expression
+Allowed symbols: lowercase latin letters, symbol `ε` for empty word and symbols `()+*`
 
-Звезда Клини относится ко всему слову, то есть `abba*` означает `(abba)*`. 
-Если нужно применить звезду Клини не ко всему слову, используйте скобки: `abb(a)*`.
+Kleene star applies to entire words. For example, `abba*` means `(abba)*`.
+To apply Klenee star to part of a word, use brackets: `abb(a)*`
 
-## Формат ввода регулярного выражения в обратной польской записи
-`.` означает конкатенацию. Далее всё аналогично.
+## Format of input of regular expression in reverse polish notation
+`.` means concatenation. Then everything is the same.
 
-Например, `ab.*c+` соответствует `ab*+c`.
+For example, `ab.*c+` means `ab*+c`.
 
-## Формат ввода/вывода конечного автомата
-Первая строка - два числа: количество вершин n и количество рёбер m.
+## Format of input/output of a finite automaton
+The first line contains two numbers - the amount of vertices n and the amount of edges m. 
+Next m lines contain edges - two indices beginning and end of edge and edge's word. 
 
-Далее в m строках перечисляются рёбра: первое число - откуда исходит ребро, второе число - куда идет ребро, далее строка - слово на ребре.
-Слово должно состоять из строчных латинский букв.
+Words should consist of lowercase latin letters.
 
-В следующей строке вводится номер стартовой вершины.
+The next line contains an index of starting vertex.
 
-Далее число k - количество завершающих вершин. На следующей строке k чисел - номера завершающих вершин.
+The next line contains the number k - the amount of final states. 
+The next k lines contain indices of final vertices.
 
-Вершины в вводе должны быть от 0 до n - 1 включительно.
+Vertices should have indices from 0 to n - 1 inclusively.
 
-# Еще о вводе
+# More about input
 
-Пример ввода автомата и вообще ввода можно посмотреть в input.txt.
+There is an example of input in input.txt
 
-Если ввод некорректный, то Undefined Behaviour (в лучшем случае упадет на одном из assert).
+If an input is not correct, then may appear Undefined Behaviour (but most likely the program will get assert exception).
 
-Вот пример ещё пример корректного ввода:
+There is another example of correct input:
 
 regular expression | to automaton | delete empty words | to dfa | to complete dfa | to minimal | to regular expression
 
