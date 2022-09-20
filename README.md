@@ -15,7 +15,7 @@ in the next lines contain input of automaton/regular expression.
 Commands are in text format.
 The first command is an input of either automaton or regular expression.
 There should not be more commands for input automaton or regular expression.
-After the last, commands there should not be |
+After the last command there should not be |
 
 ## What command means:
 - `automaton` - reads finite automaton 
